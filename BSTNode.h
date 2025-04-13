@@ -26,8 +26,16 @@ private:
 public:
     // Two constructors -- with and without initial values
     BSTNode() { lc = rc = NULL; lthread = rthread = 0; }
-    BSTNode(Key K, E e, BSTNode* l =NULL, BSTNode* r =NULL)
-    { k = K; it = e; lc = l;  rc = r; lthread = 0; rthread = 0; }
+    BSTNode(Key K, E e, BSTNode* l =NULL, BSTNode* r =NULL) {
+        k = K;
+        it = e;
+        lc = l;
+        rc = r;
+        if (l == NULL) lthread = 1;
+        else lthread = 0;
+        if (r == NULL) rthread = 1;
+        else rthread = 0;
+    }
     ~BSTNode() {}             // Destructor
 
     // Functions to set and return the value and key
@@ -38,9 +46,9 @@ public:
     
     // Functions to set and return the children
     inline BSTNode* left() const { return lc; }
-    void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; lthread = 0; }
+    void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; }
     inline BSTNode* right() const { return rc; }
-    void setRight(BinNode<E>* b) { rc = (BSTNode*)b; rthread = 0; }
+    void setRight(BinNode<E>* b) { rc = (BSTNode*)b; }
 
     // Functions to set and return the thread flags
     inline unsigned int leftThread() const { return lthread; }

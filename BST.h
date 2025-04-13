@@ -19,24 +19,30 @@ using namespace std;
 
 // Binary Search Tree implementation for the Dictionary ADT
 template <typename Key, typename E>
-class BST : public Dictionary<Key,E> {
+class BST : public Dictionary<Key, E> {
 private:
-  BSTNode<Key,E>* root;   // Root of the BST
-  
-  int nodecount;         // Number of nodes in the BST
+    BSTNode<Key, E>* root;   // Root of the BST
 
-  // Private "helper" functions
-  void clearhelp(BSTNode<Key, E>*);
-  BSTNode<Key,E>* inserthelp(BSTNode<Key, E>*,
-                              const Key&, const E&);
-  BSTNode<Key,E>* deletemin(BSTNode<Key, E>*);
-  BSTNode<Key,E>* getmin(BSTNode<Key, E>*);
-  BSTNode<Key,E>* removehelp(BSTNode<Key, E>*, const Key&);
-  E* findhelp(BSTNode<Key, E>*, const Key&) const;
-  void printhelp(BSTNode<Key, E>*, int) const;
-  void vist(BSTNode<Key, E>*) const;
+    int nodecount;         // Number of nodes in the BST
+
+    // Private "helper" functions
+    void clearhelp(BSTNode<Key, E>*);
+    BSTNode<Key, E>* inserthelp(BSTNode<Key, E>*,
+        const Key&, const E&);
+    BSTNode<Key, E>* deletemin(BSTNode<Key, E>*);
+    BSTNode<Key, E>* getmin(BSTNode<Key, E>*);
+    BSTNode<Key, E>* removehelp(BSTNode<Key, E>*, const Key&);
+    E* findhelp(BSTNode<Key, E>*, const Key&) const;
+    void printhelp(BSTNode<Key, E>*, int) const;
+    void vist(BSTNode<Key, E>*) const;
+    BSTNode<Key, E>* findPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*, const Key&);
+
 
 public:
+
+    //Public function to test the findPredecessor helper function
+    //void testPredecessor(const Key& k) { findPredecessor(root, NULL, k); }
+
   BST() { root = NULL; nodecount = 0; }  // Constructor
   
   //Note from Prof Sipantzi -- I've commented out the destructor
@@ -110,6 +116,27 @@ clearhelp(BSTNode<Key, E>* root) {
   clearhelp(root->left());
   clearhelp(root->right());
   delete root;
+}
+
+
+
+
+// Find passed in key's inorder predecessor, returning node object
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::findPredecessor(BSTNode<Key, E>* root, BSTNode<Key, E>* predecessor, const Key& k)
+{
+    if (root->key() == k)
+    {
+        //temporary testing code
+        cout << "\n\nKey: " << predecessor->key() << "\nValue: " << predecessor->element();
+
+        return predecessor;
+    }
+
+    predecessor = root;
+
+    if (k < root->key()) return findPredecessor(root->left(), predecessor, k);
+    else return findPredecessor(root->right(), predecessor, k);
 }
 
 // Insert a node into the BST, returning the updated tree
