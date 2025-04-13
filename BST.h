@@ -132,6 +132,7 @@ getmin(BSTNode<Key, E>* rt) {
     return rt;
   else return getmin(rt->left());
 }
+
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::
 deletemin(BSTNode<Key, E>* rt) {
