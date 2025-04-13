@@ -36,6 +36,7 @@ private:
     void printhelp(BSTNode<Key, E>*, int) const;
     void vist(BSTNode<Key, E>*) const;
     BSTNode<Key, E>* findPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*, const Key&);
+    BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*, const Key&);
 
 
 public:
@@ -118,25 +119,34 @@ clearhelp(BSTNode<Key, E>* root) {
   delete root;
 }
 
-
+// Find passed in key's inorder successor, returning node object
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::findSuccessor(BSTNode<Key, E>* root, BSTNode<Key, E>* successor, const Key& k)
+{
+    if (root->key() > k && root->key() < successor->key()) successor = root;
+    else if (k < root->key()) findSuccessor(root->left(), successor, k);
+    else findSuccessor(root->right(), successor, k);
+    
+    return successor;
+}
 
 
 // Find passed in key's inorder predecessor, returning node object
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::findPredecessor(BSTNode<Key, E>* root, BSTNode<Key, E>* predecessor, const Key& k)
 {
-    if (root->key() == k)
-    {
-        //temporary testing code
-        cout << "\n\nKey: " << predecessor->key() << "\nValue: " << predecessor->element();
+    if (root->key() < k && root->key() > predecessor->key()) predecessor = root;
+    else if (k < root->key()) findPredecessor(root->left(), predecessor, k);
+    else findPredecessor(root->right(), predecessor, k);
 
-        return predecessor;
-    }
+    return predecessor;
 
-    predecessor = root;
-
-    if (k < root->key()) return findPredecessor(root->left(), predecessor, k);
-    else return findPredecessor(root->right(), predecessor, k);
+    //if (root->key() == k) return predecessor;
+    //predecessor = root;
+    //if (k < root->key()) return findPredecessor(root->left(), predecessor, k);
+    //else return findPredecessor(root->right(), predecessor, k);
+    
+    //return NULL;
 }
 
 // Insert a node into the BST, returning the updated tree
@@ -145,9 +155,24 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(
     BSTNode<Key, E>* root, const Key& k, const E& it) {
   if (root == NULL)  // Empty tree: create node
     return new BSTNode<Key, E>(k, it, NULL, NULL);
+
+  /*if (root->isLeaf())
+  {
+      BSTNode<Key, E>* item = new BSTNode<Key, E>(k, it);
+      if (k < root->key())
+          root->setLeft(item);
+      else
+      {
+          root->setRight(item);
+      }
+
+
+  }*/
+
   if (k < root->key())
-    root->setLeft(inserthelp(root->left(), k, it));
+      root->setLeft(inserthelp(root->left(), k, it));
   else root->setRight(inserthelp(root->right(), k, it));
+
   return root;       // Return tree with node inserted
 }
 
