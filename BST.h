@@ -119,7 +119,7 @@ clearhelp(BSTNode<Key, E>* root) {
   delete root;
 }
 
-// Find passed in key's inorder successor, returning node object
+// Find passed in key's inorder successor, returning reference to node object
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::findSuccessor(BSTNode<Key, E>* root, BSTNode<Key, E>* successor, const Key& k)
 {
@@ -131,22 +131,16 @@ BSTNode<Key, E>* BST<Key, E>::findSuccessor(BSTNode<Key, E>* root, BSTNode<Key, 
 }
 
 
-// Find passed in key's inorder predecessor, returning node object
+// Find passed in key's inorder predecessor, returning reference to node object
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::findPredecessor(BSTNode<Key, E>* root, BSTNode<Key, E>* predecessor, const Key& k)
 {
-    if (root->key() < k && root->key() > predecessor->key()) predecessor = root;
+
+    if (root->key() < k && root->key() > predecessor->key())  predecessor = root;
     else if (k < root->key()) findPredecessor(root->left(), predecessor, k);
     else findPredecessor(root->right(), predecessor, k);
 
     return predecessor;
-
-    //if (root->key() == k) return predecessor;
-    //predecessor = root;
-    //if (k < root->key()) return findPredecessor(root->left(), predecessor, k);
-    //else return findPredecessor(root->right(), predecessor, k);
-    
-    //return NULL;
 }
 
 // Insert a node into the BST, returning the updated tree
@@ -156,22 +150,25 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(
   if (root == NULL)  // Empty tree: create node
     return new BSTNode<Key, E>(k, it, NULL, NULL);
 
-  /*if (root->isLeaf())
+
+  
+  //BSTNode<Key, E>* item = new BSTNode<Key, E>(k, it);
+  /*if (k < root->key())
   {
-      BSTNode<Key, E>* item = new BSTNode<Key, E>(k, it);
-      if (k < root->key())
-          root->setLeft(item);
-      else
-      {
-          root->setRight(item);
-      }
-
-
+      root->setLeft(inserthelp(root->left(), k, it));
+      root->left()->setLeft(findPredecessor(root->left(), root, k));
+      root->left()->setRight(findSuccessor(root->left(), root, k));
+  }
+  else
+  {
+      root->setRight(inserthelp(root->right(), k, it));
+      root->right()->setLeft(findPredecessor(root->right(), root, k));
+      root->right()->setRight(findSuccessor(root->right(), root, k));
   }*/
 
-  if (k < root->key())
+  /*if (k < root->key())
       root->setLeft(inserthelp(root->left(), k, it));
-  else root->setRight(inserthelp(root->right(), k, it));
+  else root->setRight(inserthelp(root->right(), k, it));*/
 
   return root;       // Return tree with node inserted
 }
