@@ -33,10 +33,12 @@ private:
     BSTNode<Key, E>* getmin(BSTNode<Key, E>*);
     BSTNode<Key, E>* removehelp(BSTNode<Key, E>*, const Key&);
     E* findhelp(BSTNode<Key, E>*, const Key&) const;
-    void printhelp(BSTNode<Key, E>*, int) const;
+    void printhelp(BSTNode<Key, E>*, string&);
     void vist(BSTNode<Key, E>*) const;
-    BSTNode<Key, E>* findPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*, const Key&);
-    BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*, const Key&);
+
+    BSTNode<Key, E>* inorderSuccessor(BSTNode<Key, E>*);
+    void printInorder(BSTNode<Key, E>*);
+    void printReverse(BSTNode<Key, E>*);
 
 
 public:
@@ -96,9 +98,9 @@ public:
   // Return the number of records in the dictionary.
   int size() { return nodecount; }
 
-  void print() const { // Print the contents of the BST
+  void print(string& travType){ // Print the contents of the BST
     if (root == NULL) cout << "The BST is empty.\n";
-    else printhelp(root, 0);
+    else printhelp(root, travType);
   }
   
 };
@@ -119,38 +121,48 @@ clearhelp(BSTNode<Key, E>* root) {
   delete root;
 }
 
-// Find passed in key's inorder successor, returning reference to node object
-template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::findSuccessor(BSTNode<Key, E>* root, BSTNode<Key, E>* successor, const Key& k)
-{
-    if (root->key() > k && root->key() < successor->key()) successor = root;
-    else if (k < root->key()) findSuccessor(root->left(), successor, k);
-    else findSuccessor(root->right(), successor, k);
-    
-    return successor;
-}
-
-
-// Find passed in key's inorder predecessor, returning reference to node object
-template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::findPredecessor(BSTNode<Key, E>* root, BSTNode<Key, E>* predecessor, const Key& k)
-{
-
-    if (root->key() < k && root->key() > predecessor->key())  predecessor = root;
-    else if (k < root->key()) findPredecessor(root->left(), predecessor, k);
-    else findPredecessor(root->right(), predecessor, k);
-
-    return predecessor;
-}
-
 // Insert a node into the BST, returning the updated tree
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::inserthelp(
-    BSTNode<Key, E>* root, const Key& k, const E& it) {
-  if (root == NULL)  // Empty tree: create node
-    return new BSTNode<Key, E>(k, it, NULL, NULL);
+    BSTNode<Key, E>* root, const Key& k, const E& it)
+{
+    if (root == NULL)  // Empty tree: create node
+        return new BSTNode<Key, E>(k, it, NULL, NULL);
 
+    BSTNode<Key, E>* ptr = root;
+    BSTNode<Key, E>* parent = NULL;
 
+    while (ptr != NULL)
+    {
+        if (k == ptr->key()) return root;
+
+        parent = ptr;
+
+        if (k < ptr->key())
+            if (ptr->leftThread() == 0) ptr = ptr->left();
+            else break;
+        else
+            if (ptr->rightThread() == 0) ptr = ptr->right();
+            else break;
+    }
+
+    BSTNode<Key, E>* insertVal = new BSTNode<Key, E>(k, it, NULL, NULL);
+
+    if (parent == NULL) root = insertVal;
+    else if (k < parent->key())
+    {
+        insertVal->setLeft(parent->left());
+        insertVal->setRight(parent);
+        parent->setLeftThread(0);
+        parent->setLeft(insertVal);
+    }
+    else
+    {
+        insertVal->setLeft(parent);
+        insertVal->setRight(parent->right());
+        parent->setRightThread(0);
+        parent->setRight(insertVal);
+    }
   
   //BSTNode<Key, E>* item = new BSTNode<Key, E>(k, it);
   /*if (k < root->key())
@@ -240,16 +252,47 @@ E* BST<Key, E>::findhelp(BSTNode<Key, E>* root,
   }
 }
 
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::inorderSuccessor(BSTNode<Key, E>* ptr)
+{
+    if (ptr->rightThread() == true) return ptr->right();
+
+    ptr = ptr->right();
+    while (ptr->leftThread() == 0) ptr = ptr->left();
+    return ptr;
+}
+
+template <typename Key, typename E>
+void BST<Key, E>::printInorder(BSTNode<Key, E>* root)
+{
+    BSTNode<Key, E>* ptr = root;
+    while (ptr->leftThread() == 0)
+        ptr = ptr->left();
+
+    while (ptr != NULL)
+    {
+        cout << ptr->key() << " ";
+        ptr = inorderSuccessor(ptr);
+    }
+}
+
 // Print out a BST
 template <typename Key, typename E>
 void BST<Key, E>::
-printhelp(BSTNode<Key, E>* root, int level) const {
-  if (root == NULL) return;           // Empty tree
-  printhelp(root->left(), level+1);   // Do left subtree
-  for (int i=0; i<level; i++)         // Indent to level
-    cout << "  ";
-  cout << root->key() << "\n";        // Print node value
-  printhelp(root->right(), level+1);  // Do right subtree
+printhelp(BSTNode<Key, E>* root, string& travType){
+    if (root == NULL) return;           // Empty tree
+
+    //inorder printing here
+    if (travType == "inorder")
+        printInorder(root);
+    else if (travType == "reverse")
+        printReverse(root);
+
+  //printhelp(root->left(), level+1);   // Do left subtree
+  //for (int i=0; i<level; i++)         // Indent to level
+  //  cout << "  ";
+  //cout << root->key() << "\n";        // Print node value
+  //printhelp(root->right(), level+1);  // Do right subtree
 }
 
 #endif

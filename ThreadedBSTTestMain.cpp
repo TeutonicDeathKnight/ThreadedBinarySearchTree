@@ -23,15 +23,19 @@ int main(int argc, char** argv) {
 
 	//create Threaded BST Dictionary
 	BST<int, string>* dict = new BST<int, string>;
+	
+	string travType = "inorder";
 
 	//verify dictionary was created
-	dict->print();
+	dict->print(travType);
 
 	//insert node values
 	for (int i = 0; i < 13; i++) dict->insert(intVals[i], strVals[i]);
 
+
+	
 	//print dictionary
-	dict->print();
+	dict->print(travType);
 
 	//testing BST.h->findPredecessor()
 	//dict->testPredecessor(intVals[4]);
